@@ -17,7 +17,7 @@ this is explicitly a *small task*, not a platform. Do not over-engineer.
   Facebook Page).
 - On each incoming message, the server calls the Gemini API with:
   - a fixed system prompt (see `prompts/system_prompt.md`)
-  - the company knowledge base (see `knowledge_base/company_info.json`)
+  - the Page-specific company knowledge base (`data/knowledge_bases/{pageId}.json`)
   - the user's message + short recent history (last ~6 messages, in memory or a simple
     DB row — no need for anything heavy)
 - The reply is sent back to the same channel (Messenger or Instagram) via the Graph API.
@@ -27,8 +27,8 @@ this is explicitly a *small task*, not a platform. Do not over-engineer.
 
 ## 2. Hard requirements (do not skip these)
 
-1. **No hallucination.** The bot must only state facts that exist in
-   `knowledge_base/company_info.json`. If the answer isn't in the knowledge base, it
+1. **No hallucination.** The bot must only state facts that exist in the current
+   Page's knowledge base. If the answer isn't in that knowledge base, it
    must say so naturally and offer the human contact number, never invent a price,
    service, location, or policy. This rule lives in the system prompt — keep it intact
    when you edit anything.
@@ -57,9 +57,8 @@ this is explicitly a *small task*, not a platform. Do not over-engineer.
 - Node.js + Express (simplest for Meta webhooks, huge amount of reference code exists,
   fast to stand up).
 - Gemini API over its REST `generateContent` endpoint.
-- Plain JSON file for the knowledge base (`knowledge_base/company_info.json`). No
-  database needed for v1 — this is explicitly small in scope. If the user later wants
-  logging/analytics, that's a v2 add-on, not part of this build.
+- Plain JSON files for knowledge bases. `knowledge_base/company_info.json` is the base
+  template, and connected Pages use `data/knowledge_bases/{pageId}.json`.
 - In-memory `Map` for per-user short conversation history (keyed by PSID/IGSID), capped
   at last ~6 turns, cleared after a period of inactivity (e.g. 30 min). Fine to lose on
   server restart — this is a FAQ bot, not a CRM.
@@ -97,7 +96,7 @@ this is explicitly a *small task*, not a platform. Do not over-engineer.
 
 ## 5. Gemini API call shape
 
-- Model: value of `GEMINI_MODEL` env var (default `gemini-3.6-flash` if unset).
+- Model: value of `GEMINI_MODEL` env var (default `gemini-3.5-flash-lite` if unset).
 - `systemInstruction`: contents of `prompts/system_prompt.md` with `{{KNOWLEDGE_BASE}}`
   replaced by the JSON-stringified knowledge base.
 - `messages`: last ~6 turns of history + the new user message.

@@ -1,8 +1,13 @@
 const fs = require("node:fs");
 const { detectLanguageHint } = require("./languageHint");
+const { setupFallbackReply } = require("./knowledgeBaseStore");
+
+function loadPromptTemplate(promptPath = "./prompts/system_prompt.md") {
+  return fs.readFileSync(promptPath, "utf8");
+}
 
 function loadSystemPrompt({ promptPath = "./prompts/system_prompt.md", knowledgeBasePath }) {
-  const promptTemplate = fs.readFileSync(promptPath, "utf8");
+  const promptTemplate = loadPromptTemplate(promptPath);
   const knowledgeBase = JSON.parse(fs.readFileSync(knowledgeBasePath, "utf8"));
   const companyName = knowledgeBase.company?.name_ar || knowledgeBase.company?.name_en || "the company";
 
@@ -33,9 +38,20 @@ function extractGeminiText(responseBody) {
     .trim();
 }
 
-function createGeminiClient({ config, systemPrompt, fetchImpl = fetch }) {
-  async function generateReply({ userMessage, history }) {
+function createGeminiClient({ config, systemPrompt, promptTemplate, knowledgeBaseStore, fetchImpl = fetch }) {
+  async function generateReply({ pageId, userMessage, history }) {
     const languageHint = detectLanguageHint(userMessage);
+    let activeSystemPrompt = systemPrompt;
+
+    if (knowledgeBaseStore && pageId) {
+      try {
+        activeSystemPrompt = knowledgeBaseStore.loadSystemPromptForPage({ pageId, promptTemplate });
+      } catch (error) {
+        console.error(error.message);
+        return setupFallbackReply(languageHint);
+      }
+    }
+
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
       config.geminiModel,
     )}:generateContent?key=${encodeURIComponent(config.geminiApiKey)}`;
@@ -46,7 +62,7 @@ function createGeminiClient({ config, systemPrompt, fetchImpl = fetch }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           systemInstruction: {
-            parts: [{ text: `${systemPrompt}\n\nReply language hint for this message: ${languageHint}.` }],
+            parts: [{ text: `${activeSystemPrompt}\n\nReply language hint for this message: ${languageHint}.` }],
           },
           contents: toGeminiContents([...history, { role: "user", content: userMessage }]),
           generationConfig: {
@@ -75,6 +91,7 @@ module.exports = {
   createGeminiClient,
   extractGeminiText,
   fallbackReply,
+  loadPromptTemplate,
   loadSystemPrompt,
   toGeminiContents,
 };

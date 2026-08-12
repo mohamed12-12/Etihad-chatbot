@@ -15,12 +15,13 @@ function extractMessengerMessages(body) {
   const messages = [];
 
   for (const entry of body.entry || []) {
+    const pageId = String(entry.id || "");
     for (const event of entry.messaging || []) {
       const text = event.message?.text || event.postback?.payload;
       const senderId = event.sender?.id;
 
       if (!senderId || !text || event.message?.is_echo) continue;
-      messages.push({ channel: "messenger", senderId, text });
+      messages.push({ channel: "messenger", pageId, senderId, text });
     }
   }
 
@@ -31,6 +32,7 @@ function extractInstagramMessages(body) {
   const messages = [];
 
   for (const entry of body.entry || []) {
+    const pageId = String(entry.id || "");
     for (const change of entry.changes || []) {
       if (change.field !== "messages") continue;
 
@@ -41,7 +43,7 @@ function extractInstagramMessages(body) {
         const senderId = message.from?.id || message.sender?.id || value.sender?.id;
         const text = message.text?.body || message.message?.text || message.text;
         if (!senderId || !text) continue;
-        messages.push({ channel: "instagram", senderId, text });
+        messages.push({ channel: "instagram", pageId, senderId, text });
       }
     }
   }
@@ -53,7 +55,7 @@ function extractIncomingMessages(body) {
   return [...extractMessengerMessages(body), ...extractInstagramMessages(body)];
 }
 
-function createWebhookRouter({ config, historyStore, claudeClient, sendMetaMessage }) {
+function createWebhookRouter({ config, historyStore, botClient, sendMetaMessage, pageStore }) {
   const express = require("express");
   const router = express.Router();
 
@@ -88,16 +90,18 @@ function createWebhookRouter({ config, historyStore, claudeClient, sendMetaMessa
     res.sendStatus(200);
 
     for (const incoming of incomingMessages) {
-      const userKey = `${incoming.channel}:${incoming.senderId}`;
+      const userKey = `${incoming.channel}:${incoming.pageId}:${incoming.senderId}`;
       const history = historyStore.get(userKey);
-      const reply = await claudeClient.generateReply({ userMessage: incoming.text, history });
+      const reply = await botClient.generateReply({ pageId: incoming.pageId, userMessage: incoming.text, history });
 
       try {
         await sendMetaMessage({
           channel: incoming.channel,
+          pageId: incoming.pageId,
           recipientId: incoming.senderId,
           text: reply,
           config,
+          pageStore,
         });
 
         historyStore.append(userKey, "user", incoming.text);

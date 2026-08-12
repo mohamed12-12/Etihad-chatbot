@@ -132,6 +132,12 @@
       "question_en": "Is the consultation free?",
       "answer_ar": "نعم، المكتب يستقبل الاستشارات المجانية.",
       "answer_en": "Yes, the office receives free consultations."
+    },
+    {
+      "question_ar": "بدي أسجل أو أقدم، شو أعمل؟",
+      "question_en": "I want to register or apply, what should I do?",
+      "answer_ar": "للتسجيل اتصل فينا على:\n1) 0775166089\n2) 0791453910",
+      "answer_en": "To register, call us at:\n1) 0775166089\n2) 0791453910"
     }
   ],
   "policies": {

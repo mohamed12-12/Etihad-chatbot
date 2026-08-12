@@ -1,9 +1,20 @@
 const GRAPH_API_BASE = "https://graph.facebook.com/v23.0/me/messages";
 
-async function sendMetaMessage({ channel, recipientId, text, config, fetchImpl = fetch }) {
-  const token = channel === "instagram" ? config.igPageAccessToken : config.pageAccessToken;
+function resolveAccessToken({ channel, pageId, config, pageStore }) {
+  const savedPage = pageId && pageStore ? pageStore.get(pageId) : null;
+  if (savedPage) {
+    return channel === "instagram"
+      ? savedPage.igPageAccessToken || savedPage.pageAccessToken
+      : savedPage.pageAccessToken;
+  }
+
+  return channel === "instagram" ? config.igPageAccessToken : config.pageAccessToken;
+}
+
+async function sendMetaMessage({ channel, pageId, recipientId, text, config, pageStore, fetchImpl = fetch }) {
+  const token = resolveAccessToken({ channel, pageId, config, pageStore });
   if (!token) {
-    throw new Error(`Missing access token for ${channel}`);
+    throw new Error(`Missing access token for ${channel}${pageId ? ` page ${pageId}` : ""}`);
   }
 
   const response = await fetchImpl(`${GRAPH_API_BASE}?access_token=${encodeURIComponent(token)}`, {
@@ -24,4 +35,4 @@ async function sendMetaMessage({ channel, recipientId, text, config, fetchImpl =
   return response.json();
 }
 
-module.exports = { sendMetaMessage };
+module.exports = { resolveAccessToken, sendMetaMessage };

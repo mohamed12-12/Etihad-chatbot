@@ -50,11 +50,11 @@ Graph API infrastructure once the accounts are linked.
 
 ## What the company needs to provide before launch
 
-Fill in `knowledge_base/company_info.json` with real data:
+Fill in each connected client's knowledge base from `/pages`:
 - Company name and short description (Arabic + English)
 - All services with accurate pricing and details
 - All branch locations with addresses and maps links
 - Phone numbers, WhatsApp, email, working hours
 - Common FAQ pairs the team already gets asked
 
-The more complete this file is, the fewer questions get bounced to a human.
+The more complete each client's file is, the fewer questions get bounced to a human.

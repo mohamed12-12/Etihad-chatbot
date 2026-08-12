@@ -18,6 +18,33 @@ before doing the steps below.
    Instagram Business account → put it in `PAGE_ACCESS_TOKEN`.
 5. Under **App Settings → Basic**, copy the **App Secret** → put it in `APP_SECRET`.
 
+## 2a. Add every Page token to the central webhook
+This server can handle many Facebook Pages through one Meta app and one callback URL.
+Use self-service OAuth:
+
+1. Set `META_APP_ID`, `META_APP_SECRET` or `APP_SECRET`, and `OAUTH_REDIRECT_URI`.
+2. In Facebook Login for Business settings, allow:
+   `https://Etihad.cvis.com.eg/connect/callback`
+3. Send the client to `https://Etihad.cvis.com.eg/connect`.
+4. They connect their Page; if they manage multiple Pages, they select the Page(s).
+5. The server saves the Page ID and Page Access Token without showing the token in the
+   browser.
+
+When Meta sends a webhook event, the server reads `entry.id` and uses the matching
+saved token to reply from the correct Page.
+
+## 2b. Per-client knowledge bases
+After a Page connects, open `https://Etihad.cvis.com.eg/pages`, choose **Edit KB**, and
+fill that Page's company info, services, prices, locations, phone numbers, and FAQs.
+Each Page uses only:
+
+```text
+data/knowledge_bases/{pageId}.json
+```
+
+If a connected Page has no knowledge base yet, the bot sends a setup fallback message
+instead of guessing.
+
 ## 3. Instagram
 1. Confirm your Instagram account is a **Business or Creator account** and linked to
    the same Facebook Page.

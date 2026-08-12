@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Etihad Bot Test</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="chat" aria-label="Etihad test chat">
+        <header class="chat__header">
+          <div>
+            <p class="eyebrow">Etihad.cvis.com.eg</p>
+            <h1>اختبار بوت الاتحاد</h1>
+          </div>
+          <button class="icon-button" id="clearButton" type="button" title="Clear chat" aria-label="Clear chat">
+            ↻
+          </button>
+        </header>
+
+        <div class="messages" id="messages" aria-live="polite">
+          <article class="message message--bot">
+            أهلاً وسهلاً، أنا أمجد من مكتب الاتحاد. كيف أقدر أساعدك؟
+          </article>
+        </div>
+
+        <form class="composer" id="chatForm">
+          <textarea
+            id="messageInput"
+            name="message"
+            rows="1"
+            placeholder="اكتب سؤالك هون..."
+            autocomplete="off"
+          ></textarea>
+          <button id="sendButton" type="submit">إرسال</button>
+        </form>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
