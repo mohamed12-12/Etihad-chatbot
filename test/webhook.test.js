@@ -1,0 +1,105 @@
+const assert = require("node:assert/strict");
+const crypto = require("node:crypto");
+const http = require("node:http");
+const test = require("node:test");
+const express = require("express");
+const { createHistoryStore } = require("../src/history");
+const { createWebhookRouter, extractIncomingMessages, verifyMetaSignature } = require("../src/webhook");
+
+test("validates Meta sha256 signatures", () => {
+  const rawBody = Buffer.from(JSON.stringify({ object: "page" }));
+  const appSecret = "test-secret";
+  const signatureHeader = `sha256=${crypto.createHmac("sha256", appSecret).update(rawBody).digest("hex")}`;
+
+  assert.equal(verifyMetaSignature({ rawBody, signatureHeader, appSecret }), true);
+  assert.equal(verifyMetaSignature({ rawBody, signatureHeader: "sha256=bad", appSecret }), false);
+});
+
+test("extracts Messenger text messages", () => {
+  const body = {
+    object: "page",
+    entry: [
+      {
+        messaging: [
+          {
+            sender: { id: "PSID_1" },
+            message: { text: "مرحبا" },
+          },
+        ],
+      },
+    ],
+  };
+
+  assert.deepEqual(extractIncomingMessages(body), [
+    { channel: "messenger", senderId: "PSID_1", text: "مرحبا" },
+  ]);
+});
+
+test("extracts Instagram messages payloads", () => {
+  const body = {
+    object: "instagram",
+    entry: [
+      {
+        changes: [
+          {
+            field: "messages",
+            value: {
+              messages: [
+                {
+                  from: { id: "IGSID_1" },
+                  text: { body: "How much?" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    ],
+  };
+
+  assert.deepEqual(extractIncomingMessages(body), [
+    { channel: "instagram", senderId: "IGSID_1", text: "How much?" },
+  ]);
+});
+
+test("GET /webhook returns Meta challenge for matching verify token", async () => {
+  const app = express();
+  app.use(
+    "/webhook",
+    createWebhookRouter({
+      config: { verifyToken: "verify-me" },
+      historyStore: createHistoryStore(),
+      claudeClient: { generateReply: async () => "ok" },
+      sendMetaMessage: async () => ({}),
+    }),
+  );
+
+  const server = await new Promise((resolve) => {
+    const instance = app.listen(0, () => resolve(instance));
+  });
+
+  try {
+    const { port } = server.address();
+    const response = await new Promise((resolve, reject) => {
+      http
+        .get(
+          `http://127.0.0.1:${port}/webhook?hub.mode=subscribe&hub.verify_token=verify-me&hub.challenge=abc123`,
+          resolve,
+        )
+        .on("error", reject);
+    });
+
+    const body = await new Promise((resolve) => {
+      let data = "";
+      response.on("data", (chunk) => {
+        data += chunk;
+      });
+      response.on("end", () => resolve(data));
+    });
+
+    assert.equal(response.statusCode, 200);
+    assert.equal(body, "abc123");
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});

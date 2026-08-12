@@ -1,0 +1,22 @@
+{
+  "name": "etihad-chatbot",
+  "version": "1.0.0",
+  "description": "Small Meta Messenger and Instagram FAQ chatbot for Etihad Student Services.",
+  "main": "server.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node --test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "UNLICENSED",
+  "type": "commonjs",
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1"
+  }
+}
