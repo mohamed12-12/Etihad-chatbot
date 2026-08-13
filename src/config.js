@@ -18,6 +18,8 @@ function readConfig(env = process.env) {
     pagesConfigPath: path.resolve(env.PAGES_CONFIG_PATH || "./data/pages.json"),
     knowledgeBasesDir: path.resolve(env.KNOWLEDGE_BASES_DIR || "./data/knowledge_bases"),
     adminPassword: env.ADMIN_PASSWORD || "",
+    routerWebhookToken: env.ROUTER_WEBHOOK_TOKEN || "",
+    routerDefaultClientId: env.ROUTER_DEFAULT_CLIENT_ID || "etihad",
     historyTtlMinutes: Number(env.HISTORY_TTL_MINUTES || 30),
     historyMaxTurns: Number(env.HISTORY_MAX_TURNS || 6),
   };

@@ -9,6 +9,7 @@ const { createKnowledgeBaseStore } = require("./src/knowledgeBaseStore");
 const { sendMetaMessage } = require("./src/meta");
 const { createPagesAdminRouter } = require("./src/pagesAdmin");
 const { createPageStore } = require("./src/pageStore");
+const { createRouterRelay } = require("./src/routerRelay");
 const { createTestChatRouter } = require("./src/testChat");
 const { createWebhookRouter } = require("./src/webhook");
 
@@ -46,6 +47,7 @@ app.get("/health", (_req, res) => {
 
 app.use(express.static("public"));
 app.use("/test-chat", express.json(), createTestChatRouter({ historyStore, botClient: geminiClient }));
+app.use("/router-webhook", express.json({ limit: "1mb" }), createRouterRelay({ config, historyStore, botClient: geminiClient }));
 app.use("/pages", createPagesAdminRouter({ config, pageStore, knowledgeBaseStore }));
 app.use("/connect", createConnectRouter({ config, pageStore, knowledgeBaseStore }));
 
