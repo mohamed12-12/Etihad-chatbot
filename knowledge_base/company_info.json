@@ -2,8 +2,8 @@
   "company": {
     "name_ar": "مكتب الاتحاد للخدمات الطلابية",
     "name_en": "Etihad Student Services Office",
-    "short_description_ar": "مكتب الاتحاد للخدمات الطلابية بيوفر فرصة للطلاب اللي ما بدهم ضغط التوجيهي أو ما حالفهم الحظ فيه، إنهم يكملوا دراسة الثانوية في مصر أو تركيا ضمن نظام معتمد، وبعدها يقدروا يعادلوا شهادتهم ويكملوا دراستهم الجامعية.",
-    "short_description_en": "Etihad Student Services Office helps students complete secondary study in Egypt or Turkey through an accredited system, then proceed with certificate equivalency so they can continue university study.",
+    "short_description_ar": "إحنا في مكتب الاتحاد بنوفر فرصة للطلاب اللي ما بحبوا ضغط التوجيهي أو ما حالفهم الحظ فيه، إنهم يكملوا دراسة الثانوية في مصر أو تركيا ضمن نظام معتمد، وبعدها يقدروا يعادلوا شهادتهم ويكملوا دراستهم الجامعية داخل الأردن أو خارجها.",
+    "short_description_en": "Etihad Student Services Office helps students who do not want the pressure of Tawjihi, or who were not successful in it, complete secondary study in Egypt or Turkey through an accredited system, then proceed with certificate equivalency so they can continue university study inside or outside Jordan.",
     "founded_year": "",
     "website": "",
     "social": {
@@ -26,8 +26,8 @@
     ],
     "whatsapp": "",
     "email": "",
-    "working_hours_ar": "",
-    "working_hours_en": ""
+    "working_hours_ar": "ساعات الدوام من الساعة 8 صباحًا لغاية الساعة 5 مساءً، طوال أيام الأسبوع ما عدا يوم الجمعة.",
+    "working_hours_en": "Working hours are from 8:00 AM to 5:00 PM, every day except Friday."
   },
   "locations": [
     {
@@ -36,7 +36,7 @@
       "city": "Amman",
       "address_ar": "عمّان - الدوار السابع، بجانب باصات JETT، مجمع طيبة 1، فوق مكتب دالاس، الطابق الرابع.",
       "address_en": "Amman - 7th Circle, next to JETT buses, Taiba 1 Complex, above Dallas office, 4th floor.",
-      "google_maps_link": "",
+      "google_maps_link": "https://maps.app.goo.gl/WLEsWrwwycbedTFi8?g_st=ic",
       "phone": "0775166089 / 0791453910"
     }
   ],
@@ -124,8 +124,8 @@
     {
       "question_ar": "وين موقع المكتب؟",
       "question_en": "Where is the office located?",
-      "answer_ar": "المكتب في عمّان - الدوار السابع، بجانب باصات JETT، مجمع طيبة 1، فوق مكتب دالاس، الطابق الرابع.",
-      "answer_en": "The office is in Amman - 7th Circle, next to JETT buses, Taiba 1 Complex, above Dallas office, 4th floor."
+      "answer_ar": "المكتب في عمّان - الدوار السابع، بجانب باصات JETT، مجمع طيبة 1، فوق مكتب دالاس، الطابق الرابع.\nرابط الموقع: https://maps.app.goo.gl/WLEsWrwwycbedTFi8?g_st=ic",
+      "answer_en": "The office is in Amman - 7th Circle, next to JETT buses, Taiba 1 Complex, above Dallas office, 4th floor.\nLocation link: https://maps.app.goo.gl/WLEsWrwwycbedTFi8?g_st=ic"
     },
     {
       "question_ar": "هل الاستشارة مجانية؟",
@@ -144,6 +144,30 @@
       "question_en": "Can I have the contact numbers?",
       "answer_ar": "أرقام التواصل:\n1) 0775166089\n2) 0791453910",
       "answer_en": "Contact numbers:\n1) 0775166089\n2) 0791453910"
+    },
+    {
+      "question_ar": "شو نظام الأقساط؟",
+      "question_en": "What is the installment plan?",
+      "answer_ar": "نظام الأقساط عنا ميسّر جدًا. بتدفع دفعة أولى 1000 دينار، وباقي المبلغ بتقدر تقسّطه على طول فترة الدراسة، سواء دفعات شهرية أو دفعات على فترات حسب الاتفاق مع المكتب. أهم شيء مع نهاية فترة الدراسة يكون المبلغ كامل مسدّد.",
+      "answer_en": "The installment plan is flexible. The first payment is 1,000 JOD, and the remaining amount can be paid throughout the study period, either monthly or in installments agreed with the office. The full amount should be settled by the end of the study period."
+    },
+    {
+      "question_ar": "شو الأوراق المطلوبة للتسجيل؟",
+      "question_en": "What documents are required for registration?",
+      "answer_ar": "الأوراق المطلوبة للتسجيل هي:\n1) شهادة الصف التاسع مصدقة.\n2) شهادة الصف العاشر مصدقة من التربية والتعليم والخارجية.\n3) شهادة الميلاد مصدقة من الخارجية.\n4) جواز السفر الأصلي.\n5) 6 صور شخصية.",
+      "answer_en": "The required documents are:\n1) Certified ninth-grade certificate.\n2) Tenth-grade certificate certified by the Ministry of Education and the Ministry of Foreign Affairs.\n3) Birth certificate certified by the Ministry of Foreign Affairs.\n4) Original passport.\n5) Six personal photos."
+    },
+    {
+      "question_ar": "شو بتقدموا في مكتب الاتحاد؟",
+      "question_en": "What does Etihad Office offer?",
+      "answer_ar": "إحنا في مكتب الاتحاد بنوفر فرصة للطلاب اللي ما بحبوا ضغط التوجيهي أو ما حالفهم الحظ فيه، إنهم يكملوا دراسة الثانوية في مصر أو تركيا ضمن نظام معتمد، وبعدها يقدروا يعادلوا شهادتهم ويكملوا دراستهم الجامعية داخل الأردن أو خارجها.",
+      "answer_en": "Etihad Office helps students who do not want the pressure of Tawjihi, or who were not successful in it, complete secondary study in Egypt or Turkey through an accredited system, then proceed with certificate equivalency so they can continue university study inside or outside Jordan."
+    },
+    {
+      "question_ar": "شو ساعات الدوام؟",
+      "question_en": "What are the working hours?",
+      "answer_ar": "ساعات الدوام من الساعة 8 صباحًا لغاية الساعة 5 مساءً، طوال أيام الأسبوع ما عدا يوم الجمعة.",
+      "answer_en": "Working hours are from 8:00 AM to 5:00 PM, every day except Friday."
     }
   ],
   "policies": {
