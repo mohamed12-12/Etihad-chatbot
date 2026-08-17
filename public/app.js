@@ -69,6 +69,6 @@ input.addEventListener("keydown", (event) => {
 clearButton.addEventListener("click", async () => {
   await fetch(`/test-chat/${userId}`, { method: "DELETE" }).catch(() => {});
   messages.replaceChildren();
-  addMessage("أهلاً وسهلاً، أنا أمجد من مكتب الاتحاد. كيف أقدر أساعدك؟", "bot");
+  addMessage("أهلاً وسهلاً، أنا أمجد من مكتب الاتحاد. كيف بقدر أساعدك؟", "bot");
   input.focus();
 });

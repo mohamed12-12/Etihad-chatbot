@@ -3,7 +3,7 @@ function voiceReply(languageHint = "Arabic") {
     return "Could you write your question as text? That way I can answer you clearly.";
   }
 
-  return "ممكن تكتبلي سؤالك نص؟ هيكون أوضح وأقدر أساعدك بسرعة.";
+  return "ممكن تكتبلي سؤالك نص؟ هيك بكون أوضح وبقدر أساعدك بسرعة.";
 }
 
 function isAudioLike(value) {
