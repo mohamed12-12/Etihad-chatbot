@@ -1,4 +1,5 @@
 const crypto = require("node:crypto");
+const { waitBeforeReply } = require("./responseDelay");
 
 function verifyMetaSignature({ rawBody, signatureHeader, appSecret }) {
   if (!signatureHeader || !signatureHeader.startsWith("sha256=")) return false;
@@ -92,6 +93,7 @@ function createWebhookRouter({ config, historyStore, botClient, sendMetaMessage,
     for (const incoming of incomingMessages) {
       const userKey = `${incoming.channel}:${incoming.pageId}:${incoming.senderId}`;
       const history = historyStore.get(userKey);
+      await waitBeforeReply(config);
       const reply = await botClient.generateReply({ pageId: incoming.pageId, userMessage: incoming.text, history });
 
       try {

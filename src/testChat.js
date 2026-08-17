@@ -1,4 +1,6 @@
-function createTestChatRouter({ historyStore, botClient }) {
+const { waitBeforeReply } = require("./responseDelay");
+
+function createTestChatRouter({ historyStore, botClient, config }) {
   const express = require("express");
   const router = express.Router();
 
@@ -12,6 +14,7 @@ function createTestChatRouter({ historyStore, botClient }) {
 
     const userKey = `test:${userId}`;
     const history = historyStore.get(userKey);
+    await waitBeforeReply(config);
     const reply = await botClient.generateReply({ userMessage: message, history });
 
     historyStore.append(userKey, "user", message);

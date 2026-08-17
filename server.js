@@ -46,7 +46,7 @@ app.get("/health", (_req, res) => {
 });
 
 app.use(express.static("public"));
-app.use("/test-chat", express.json(), createTestChatRouter({ historyStore, botClient: geminiClient }));
+app.use("/test-chat", express.json(), createTestChatRouter({ historyStore, botClient: geminiClient, config }));
 app.use("/router-webhook", express.json({ limit: "1mb" }), createRouterRelay({ config, historyStore, botClient: geminiClient }));
 app.use("/pages", createPagesAdminRouter({ config, pageStore, knowledgeBaseStore }));
 app.use("/connect", createConnectRouter({ config, pageStore, knowledgeBaseStore }));

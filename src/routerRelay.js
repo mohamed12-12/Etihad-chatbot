@@ -1,4 +1,5 @@
 const { extractIncomingMessages } = require("./webhook");
+const { waitBeforeReply } = require("./responseDelay");
 
 function checkRelayToken(req, token) {
   if (!token) return true;
@@ -62,6 +63,7 @@ function createRouterRelay({ config, historyStore, botClient }) {
     for (const incoming of messages) {
       const userKey = `router:${incoming.channel}:${incoming.pageId}:${incoming.senderId}`;
       const history = historyStore.get(userKey);
+      await waitBeforeReply(config);
       const reply = await botClient.generateReply({
         pageId: incoming.pageId,
         userMessage: incoming.text,

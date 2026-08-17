@@ -2,8 +2,8 @@
   "company": {
     "name_ar": "مكتب الاتحاد للخدمات الطلابية",
     "name_en": "Etihad Student Services Office",
-    "short_description_ar": "مكتب الاتحاد للخدمات الطلابية بيوفر فرصة للطلاب اللي ما بدهم ضغط التوجيهي أو ما حالفهم الحظ فيه، إنهم يكملوا دراسة الثانوية في مصر ضمن نظام معتمد، وبعدها يقدروا يعادلوا شهادتهم ويكملوا دراستهم الجامعية داخل الأردن أو خارجها.",
-    "short_description_en": "Etihad Student Services Office helps students complete secondary study in Egypt through an accredited system, then proceed with certificate equivalency so they can continue university study in Jordan or abroad.",
+    "short_description_ar": "مكتب الاتحاد للخدمات الطلابية بيوفر فرصة للطلاب اللي ما بدهم ضغط التوجيهي أو ما حالفهم الحظ فيه، إنهم يكملوا دراسة الثانوية في مصر أو تركيا ضمن نظام معتمد، وبعدها يقدروا يعادلوا شهادتهم ويكملوا دراستهم الجامعية.",
+    "short_description_en": "Etihad Student Services Office helps students complete secondary study in Egypt or Turkey through an accredited system, then proceed with certificate equivalency so they can continue university study.",
     "founded_year": "",
     "website": "",
     "social": {
@@ -42,27 +42,27 @@
   ],
   "services": [
     {
-      "id": "secondary_study_one_year_egypt",
-      "name_ar": "نظام دراسة الثانوية في مصر - سنة واحدة",
-      "name_en": "Secondary Study in Egypt - One-Year Program",
-      "description_ar": "سنة دراسية كاملة، تشمل إقامة لمدة 6 شهور مقسمة على فصلين، كل فصل 3 شهور. الدراسة وجاهية بالكامل داخل قاعات ومراكز تعليمية مجهزة، مع حضور ومتابعة دراسية للطلاب أثناء فترة إقامتهم في مصر.",
-      "description_en": "A full academic year with 6 months of accommodation split over two semesters, 3 months each. Study is fully in person in equipped classrooms and education centers, with attendance and academic follow-up during the stay in Egypt.",
+      "id": "secondary_study_one_year",
+      "name_ar": "نظام دراسة الثانوية في مصر أو تركيا - سنة واحدة",
+      "name_en": "Secondary Study in Egypt or Turkey - One-Year Program",
+      "description_ar": "سنة دراسية كاملة، وتشمل إقامة مؤقتة لمدة 6 شهور مقسمة على فصلين، كل فصل 3 شهور. الدراسة وجاهية بالكامل داخل قاعات ومراكز تعليمية مجهزة، مع حضور ومتابعة دراسية للطلاب أثناء فترة الدراسة.",
+      "description_en": "A full academic year with 6 months of temporary accommodation split over two semesters, 3 months each. Study is fully in person in equipped classrooms and education centers, with attendance and academic follow-up during the study period.",
       "price": "5000",
       "currency": "JOD",
-      "price_notes_ar": "يوجد إمكانية التقسيط على مدار السنة. الرسوم شاملة الرسوم الدراسية كاملة، المواصلات والتنقلات، رسوم معادلة الشهادة بالكرت الأبيض، دورة لغة إنجليزية مكثفة، والإقامة الطلابية المؤثثة.",
-      "price_notes_en": "Installments are available over the year. Fees include full tuition, transportation/transfers, certificate equivalency fees with the white card, an intensive English course, and furnished student accommodation.",
-      "duration_or_delivery": "1 academic year; 6 months accommodation in Egypt"
+      "price_notes_ar": "تكلفة الدراسة في مصر وتركيا نفس الشيء. يوجد إمكانية التقسيط على مدار السنة. الرسوم شاملة الرسوم الدراسية كاملة، المواصلات والتنقلات، رسوم معادلة الشهادة بالكرت الأبيض، دورة لغة إنجليزية مكثفة، والإقامة المؤقتة.",
+      "price_notes_en": "The study cost is the same for Egypt and Turkey. Installments are available over the year. Fees include full tuition, transportation/transfers, certificate equivalency fees with the white card, an intensive English course, and temporary accommodation.",
+      "duration_or_delivery": "1 academic year; 6 months temporary accommodation"
     },
     {
-      "id": "secondary_study_two_years_egypt",
-      "name_ar": "نظام دراسة الثانوية في مصر - سنتين",
-      "name_en": "Secondary Study in Egypt - Two-Year Program",
+      "id": "secondary_study_two_years",
+      "name_ar": "نظام دراسة الثانوية في مصر أو تركيا - سنتين",
+      "name_en": "Secondary Study in Egypt or Turkey - Two-Year Program",
       "description_ar": "نفس آلية الدراسة والإقامة والدروس، لكن على مدار سنتين دراسيتين.",
       "description_en": "The same study, accommodation, and lesson structure, delivered over two academic years.",
       "price": "6000",
       "currency": "JOD",
-      "price_notes_ar": "يوجد إمكانية التقسيط على مدار السنتين. الرسوم شاملة الرسوم الدراسية كاملة، المواصلات والتنقلات، رسوم معادلة الشهادة بالكرت الأبيض، دورة لغة إنجليزية مكثفة، والإقامة الطلابية المؤثثة.",
-      "price_notes_en": "Installments are available over the two years. Fees include full tuition, transportation/transfers, certificate equivalency fees with the white card, an intensive English course, and furnished student accommodation.",
+      "price_notes_ar": "تكلفة الدراسة في مصر وتركيا نفس الشيء. يوجد إمكانية التقسيط على مدار السنتين. الرسوم شاملة الرسوم الدراسية كاملة، المواصلات والتنقلات، رسوم معادلة الشهادة بالكرت الأبيض، دورة لغة إنجليزية مكثفة، والإقامة المؤقتة.",
+      "price_notes_en": "The study cost is the same for Egypt and Turkey. Installments are available over the two years. Fees include full tuition, transportation/transfers, certificate equivalency fees with the white card, an intensive English course, and temporary accommodation.",
       "duration_or_delivery": "2 academic years"
     }
   ],
@@ -70,8 +70,8 @@
     {
       "question_ar": "كم مدة الدراسة؟",
       "question_en": "How long is the study period?",
-      "answer_ar": "يوجد نظامان للدراسة: نظام السنة الواحدة وهو سنة دراسية كاملة مع 6 شهور إقامة مقسمة على فصلين، ونظام السنتين بنفس آلية الدراسة والإقامة لكن على مدار سنتين دراسيتين.",
-      "answer_en": "There are two study options: a one-year program, which is a full academic year with 6 months of accommodation split over two semesters, and a two-year program with the same study and accommodation structure over two academic years."
+      "answer_ar": "يوجد نظامان للدراسة: نظام السنة الواحدة وهو سنة دراسية كاملة مع 6 شهور إقامة مؤقتة مقسمة على فصلين، ونظام السنتين بنفس آلية الدراسة والإقامة لكن على مدار سنتين دراسيتين.",
+      "answer_en": "There are two study options: a one-year program, which is a full academic year with 6 months of temporary accommodation split over two semesters, and a two-year program with the same study and accommodation structure over two academic years."
     },
     {
       "question_ar": "الدراسة أونلاين ولا وجاهي؟",
@@ -82,14 +82,14 @@
     {
       "question_ar": "في حضور دراسي؟",
       "question_en": "Is attendance required?",
-      "answer_ar": "نعم، يوجد حضور ومتابعة دراسية للطلاب أثناء فترة إقامتهم في مصر وضمن الخطة الدراسية.",
-      "answer_en": "Yes. Students have attendance and academic follow-up during their stay in Egypt as part of the study plan."
+      "answer_ar": "نعم، يوجد حضور ومتابعة دراسية للطلاب أثناء فترة الدراسة وضمن الخطة الدراسية.",
+      "answer_en": "Yes. Students have attendance and academic follow-up during the study period as part of the study plan."
     },
     {
       "question_ar": "هل الشهادة معتمدة؟",
       "question_en": "Is the certificate accredited?",
-      "answer_ar": "نعم، الشهادة معتمدة رسمياً من وزارة التربية والتعليم الأردنية والمصرية.",
-      "answer_en": "Yes. The certificate is officially accredited by the Jordanian and Egyptian Ministries of Education."
+      "answer_ar": "نعم، الشهادة معتمدة رسمياً. تفاصيل الاعتماد بتتأكد حسب بلد الدراسة والمسار، وفريقنا يوضح لك التفاصيل المناسبة لحالتك على الهاتف.",
+      "answer_en": "Yes, the certificate is officially accredited. Accreditation details are confirmed based on the study country and track, and our team can explain the details for your case by phone."
     },
     {
       "question_ar": "شو العمر المطلوب للتسجيل؟",
@@ -100,20 +100,20 @@
     {
       "question_ar": "كم الأسعار وكيف طريقة الدفع؟",
       "question_en": "What are the prices and payment options?",
-      "answer_ar": "نظام السنة الواحدة 5000 دينار أردني مع إمكانية التقسيط على مدار السنة. نظام السنتين 6000 دينار أردني مع إمكانية التقسيط على مدار السنتين.",
-      "answer_en": "The one-year program is 5,000 JOD with installments available over the year. The two-year program is 6,000 JOD with installments available over the two years."
+      "answer_ar": "تكلفة الدراسة في مصر وتركيا نفس الشيء: نظام السنة الواحدة 5000 دينار أردني مع إمكانية التقسيط على مدار السنة، ونظام السنتين 6000 دينار أردني مع إمكانية التقسيط على مدار السنتين.",
+      "answer_en": "The study cost is the same for Egypt and Turkey: the one-year program is 5,000 JOD with installments available over the year, and the two-year program is 6,000 JOD with installments available over the two years."
     },
     {
       "question_ar": "شو الرسوم بتشمل؟",
       "question_en": "What do the fees include?",
-      "answer_ar": "الرسوم تشمل الرسوم الدراسية كاملة، المواصلات والتنقلات، رسوم معادلة الشهادة بالكرت الأبيض، دورة لغة إنجليزية مكثفة، والإقامة الطلابية المؤثثة.",
-      "answer_en": "Fees include full tuition, transportation/transfers, certificate equivalency fees with the white card, an intensive English course, and furnished student accommodation."
+      "answer_ar": "الرسوم تشمل الرسوم الدراسية كاملة، المواصلات والتنقلات، رسوم معادلة الشهادة بالكرت الأبيض، دورة لغة إنجليزية مكثفة، والإقامة المؤقتة.",
+      "answer_en": "Fees include full tuition, transportation/transfers, certificate equivalency fees with the white card, an intensive English course, and temporary accommodation."
     },
     {
       "question_ar": "هل يوجد امتحان تحصيلي وقدرات؟ وهل هو صعب؟",
       "question_en": "Are there achievement and aptitude exams? Are they difficult?",
-      "answer_ar": "نعم يوجد امتحان، وخلال فترة الدراسة في مصر يتم تجهيز الطالب وتدريبه بشكل مكثف على أسئلة امتحانات سابقة تتكرر بنسبة كبيرة جداً. حسب معلومات المكتب، جميع الطلاب تخطّوا الامتحان بنجاح.",
-      "answer_en": "Yes, there is an exam. During the study period in Egypt, students are prepared intensively using previous exam questions that repeat at a very high rate. According to the office information, all students have passed the exam successfully."
+      "answer_ar": "نعم يوجد امتحان، وخلال فترة الدراسة يتم تجهيز الطالب وتدريبه بشكل مكثف على أسئلة امتحانات سابقة تتكرر بنسبة كبيرة جداً. حسب معلومات المكتب، جميع الطلاب تخطّوا الامتحان بنجاح.",
+      "answer_en": "Yes, there is an exam. During the study period, students are prepared intensively using previous exam questions that repeat at a very high rate. According to the office information, all students have passed the exam successfully."
     },
     {
       "question_ar": "شو تفاصيل السكن وطبيعة الأمان؟",

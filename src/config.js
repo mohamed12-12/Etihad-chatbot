@@ -20,6 +20,8 @@ function readConfig(env = process.env) {
     adminPassword: env.ADMIN_PASSWORD || "",
     routerWebhookToken: env.ROUTER_WEBHOOK_TOKEN || "",
     routerDefaultClientId: env.ROUTER_DEFAULT_CLIENT_ID || "etihad",
+    responseDelayMinMs: Number(env.RESPONSE_DELAY_MIN_MS || 1200),
+    responseDelayMaxMs: Number(env.RESPONSE_DELAY_MAX_MS || 3200),
     historyTtlMinutes: Number(env.HISTORY_TTL_MINUTES || 30),
     historyMaxTurns: Number(env.HISTORY_MAX_TURNS || 6),
   };
