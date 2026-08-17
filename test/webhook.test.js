@@ -165,3 +165,28 @@ test("POST /webhook passes Meta entry page ID into the bot client", async () => 
     await new Promise((resolve) => server.close(resolve));
   }
 });
+
+test("extracts Messenger voice notes as direct replies", () => {
+  const body = {
+    object: "page",
+    entry: [
+      {
+        id: "PAGE_1",
+        messaging: [
+          {
+            sender: { id: "PSID_1" },
+            message: {
+              attachments: [{ type: "audio", payload: { url: "https://example.com/voice.ogg" } }],
+            },
+          },
+        ],
+      },
+    ],
+  };
+
+  const [message] = extractIncomingMessages(body);
+  assert.equal(message.channel, "messenger");
+  assert.equal(message.pageId, "PAGE_1");
+  assert.equal(message.senderId, "PSID_1");
+  assert.match(message.directReply, /تكتبلي سؤالك نص/);
+});

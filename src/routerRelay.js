@@ -1,4 +1,5 @@
 const { extractIncomingMessages } = require("./webhook");
+const { isAudioLike, voiceReply } = require("./nonTextReply");
 const { waitBeforeReply } = require("./responseDelay");
 
 function checkRelayToken(req, token) {
@@ -20,14 +21,14 @@ function extractRelayMessages(body, fallbackClientId) {
     }));
   }
 
-  const text =
+  const rawText =
     body.message?.text ||
-    body.message ||
     body.text ||
     body.body ||
     body.content ||
     body.payload?.text ||
     body.payload?.message;
+  const text = typeof rawText === "string" ? rawText : "";
   const senderId =
     body.sender?.id ||
     body.senderId ||
@@ -39,6 +40,9 @@ function extractRelayMessages(body, fallbackClientId) {
   const pageId = body.pageId || body.ownerId || body.accountId || fallbackClientId;
   const channel = body.channel || "instagram";
 
+  if (!text && isAudioLike(body)) {
+    return [{ channel, pageId: String(pageId), senderId: String(senderId), text: "", directReply: voiceReply() }];
+  }
   if (!text) return [];
   return [{ channel, pageId: String(pageId), senderId: String(senderId), text: String(text) }];
 }
@@ -64,13 +68,15 @@ function createRouterRelay({ config, historyStore, botClient }) {
       const userKey = `router:${incoming.channel}:${incoming.pageId}:${incoming.senderId}`;
       const history = historyStore.get(userKey);
       await waitBeforeReply(config);
-      const reply = await botClient.generateReply({
-        pageId: incoming.pageId,
-        userMessage: incoming.text,
-        history,
-      });
+      const reply =
+        incoming.directReply ||
+        (await botClient.generateReply({
+          pageId: incoming.pageId,
+          userMessage: incoming.text,
+          history,
+        }));
 
-      historyStore.append(userKey, "user", incoming.text);
+      historyStore.append(userKey, "user", incoming.text || "[voice note]");
       historyStore.append(userKey, "assistant", reply);
       responses.push({
         channel: incoming.channel,

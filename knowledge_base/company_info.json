@@ -88,8 +88,8 @@
     {
       "question_ar": "هل الشهادة معتمدة؟",
       "question_en": "Is the certificate accredited?",
-      "answer_ar": "نعم، الشهادة معتمدة رسمياً. تفاصيل الاعتماد بتتأكد حسب بلد الدراسة والمسار، وفريقنا يوضح لك التفاصيل المناسبة لحالتك على الهاتف.",
-      "answer_en": "Yes, the certificate is officially accredited. Accreditation details are confirmed based on the study country and track, and our team can explain the details for your case by phone."
+      "answer_ar": "نعم، الشهادة معتمدة رسمياً في مصر والأردن وتركيا.",
+      "answer_en": "Yes, the certificate is officially accredited in Egypt, Jordan, and Turkey."
     },
     {
       "question_ar": "شو العمر المطلوب للتسجيل؟",
@@ -112,8 +112,8 @@
     {
       "question_ar": "هل يوجد امتحان تحصيلي وقدرات؟ وهل هو صعب؟",
       "question_en": "Are there achievement and aptitude exams? Are they difficult?",
-      "answer_ar": "نعم يوجد امتحان، وخلال فترة الدراسة يتم تجهيز الطالب وتدريبه بشكل مكثف على أسئلة امتحانات سابقة تتكرر بنسبة كبيرة جداً. حسب معلومات المكتب، جميع الطلاب تخطّوا الامتحان بنجاح.",
-      "answer_en": "Yes, there is an exam. During the study period, students are prepared intensively using previous exam questions that repeat at a very high rate. According to the office information, all students have passed the exam successfully."
+      "answer_ar": "نعم يوجد امتحان، وخلال فترة الدراسة في مصر أو تركيا يتم تجهيز الطالب وتدريبه بشكل مكثف على أسئلة امتحانات سابقة تتكرر بنسبة كبيرة جداً. حسب معلومات المكتب، جميع الطلاب تخطّوا الامتحان بنجاح.",
+      "answer_en": "Yes, there is an exam. During the study period in Egypt or Turkey, students are prepared intensively using previous exam questions that repeat at a very high rate. According to the office information, all students have passed the exam successfully."
     },
     {
       "question_ar": "شو تفاصيل السكن وطبيعة الأمان؟",

@@ -1,4 +1,5 @@
 const crypto = require("node:crypto");
+const { isAudioLike, voiceReply } = require("./nonTextReply");
 const { waitBeforeReply } = require("./responseDelay");
 
 function verifyMetaSignature({ rawBody, signatureHeader, appSecret }) {
@@ -21,7 +22,12 @@ function extractMessengerMessages(body) {
       const text = event.message?.text || event.postback?.payload;
       const senderId = event.sender?.id;
 
-      if (!senderId || !text || event.message?.is_echo) continue;
+      if (!senderId || event.message?.is_echo) continue;
+      if (!text && isAudioLike(event.message?.attachments)) {
+        messages.push({ channel: "messenger", pageId, senderId, text: "", directReply: voiceReply() });
+        continue;
+      }
+      if (!text) continue;
       messages.push({ channel: "messenger", pageId, senderId, text });
     }
   }
@@ -43,7 +49,12 @@ function extractInstagramMessages(body) {
       for (const message of candidateMessages) {
         const senderId = message.from?.id || message.sender?.id || value.sender?.id;
         const text = message.text?.body || message.message?.text || message.text;
-        if (!senderId || !text) continue;
+        if (!senderId) continue;
+        if (!text && isAudioLike(message)) {
+          messages.push({ channel: "instagram", pageId, senderId, text: "", directReply: voiceReply() });
+          continue;
+        }
+        if (!text) continue;
         messages.push({ channel: "instagram", pageId, senderId, text });
       }
     }
@@ -94,7 +105,7 @@ function createWebhookRouter({ config, historyStore, botClient, sendMetaMessage,
       const userKey = `${incoming.channel}:${incoming.pageId}:${incoming.senderId}`;
       const history = historyStore.get(userKey);
       await waitBeforeReply(config);
-      const reply = await botClient.generateReply({ pageId: incoming.pageId, userMessage: incoming.text, history });
+      const reply = incoming.directReply || (await botClient.generateReply({ pageId: incoming.pageId, userMessage: incoming.text, history }));
 
       try {
         await sendMetaMessage({
@@ -106,7 +117,7 @@ function createWebhookRouter({ config, historyStore, botClient, sendMetaMessage,
           pageStore,
         });
 
-        historyStore.append(userKey, "user", incoming.text);
+        historyStore.append(userKey, "user", incoming.text || "[voice note]");
         historyStore.append(userKey, "assistant", reply);
       } catch (error) {
         console.error("Meta send error:", error);
