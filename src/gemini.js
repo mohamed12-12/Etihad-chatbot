@@ -21,7 +21,7 @@ function fallbackReply(languageHint) {
     return "Sorry, we're having a small technical hiccup. Please try again in a bit.";
   }
 
-  return "بنعتذر، في مشكلة تقنية بسيطة. جرّب تبعتلنا كمان شوي 🙏";
+  return "بنعتذر، في مشكلة تقنية بسيطة. جرّب تبعتلنا كمان شوي.";
 }
 
 function toGeminiContents(messages) {

@@ -2,6 +2,24 @@ const { extractIncomingMessages } = require("./webhook");
 const { isAudioLike, voiceReply } = require("./nonTextReply");
 const { waitBeforeReply } = require("./responseDelay");
 
+function safeErrorReply(channel) {
+  if (channel === "messenger" || channel === "instagram") {
+    return "بنعتذر، صار خلل بسيط. جرّب تبعتلنا كمان شوي.";
+  }
+
+  return "Sorry, something went wrong. Please try again in a bit.";
+}
+
+function normalizeRelayReply(reply, channel) {
+  const text = String(reply || "").trim();
+
+  if (!text || /^<!doctype html/i.test(text) || /<html[\s>]/i.test(text) || /Internal Server Error/i.test(text)) {
+    return safeErrorReply(channel);
+  }
+
+  return text.slice(0, 950);
+}
+
 function checkRelayToken(req, token) {
   if (!token) return true;
 
@@ -52,46 +70,57 @@ function createRouterRelay({ config, historyStore, botClient }) {
   const router = express.Router();
 
   async function handleRelay(req, res) {
-    if (!checkRelayToken(req, config.routerWebhookToken)) {
-      return res.sendStatus(401);
-    }
+    try {
+      if (!checkRelayToken(req, config.routerWebhookToken)) {
+        return res.sendStatus(401);
+      }
 
-    const fallbackClientId = req.params.clientId || config.routerDefaultClientId || "default";
-    const messages = extractRelayMessages(req.body || {}, fallbackClientId);
+      const fallbackClientId = req.params.clientId || config.routerDefaultClientId || "default";
+      const messages = extractRelayMessages(req.body || {}, fallbackClientId);
 
-    if (!messages.length) {
-      return res.status(400).json({ error: "No message text found in payload." });
-    }
+      if (!messages.length) {
+        return res.status(400).json({ error: "No message text found in payload." });
+      }
 
-    const responses = [];
-    for (const incoming of messages) {
-      const userKey = `router:${incoming.channel}:${incoming.pageId}:${incoming.senderId}`;
-      const history = historyStore.get(userKey);
-      await waitBeforeReply(config);
-      const reply =
-        incoming.directReply ||
-        (await botClient.generateReply({
+      const responses = [];
+      for (const incoming of messages) {
+        const userKey = `router:${incoming.channel}:${incoming.pageId}:${incoming.senderId}`;
+        const history = historyStore.get(userKey);
+        await waitBeforeReply(config);
+        const generatedReply =
+          incoming.directReply ||
+          (await botClient.generateReply({
+            pageId: incoming.pageId,
+            userMessage: incoming.text,
+            history,
+          }));
+        const reply = normalizeRelayReply(generatedReply, incoming.channel);
+
+        historyStore.append(userKey, "user", incoming.text || "[voice note]");
+        historyStore.append(userKey, "assistant", reply);
+        responses.push({
+          channel: incoming.channel,
           pageId: incoming.pageId,
-          userMessage: incoming.text,
-          history,
-        }));
+          senderId: incoming.senderId,
+          reply,
+          text: reply,
+        });
+      }
 
-      historyStore.append(userKey, "user", incoming.text || "[voice note]");
-      historyStore.append(userKey, "assistant", reply);
-      responses.push({
-        channel: incoming.channel,
-        pageId: incoming.pageId,
-        senderId: incoming.senderId,
+      return res.status(200).json({
+        reply: responses[0].reply,
+        text: responses[0].reply,
+        responses,
+      });
+    } catch (error) {
+      console.error("Router relay error:", error);
+      const reply = safeErrorReply(req.body?.channel || "instagram");
+      return res.status(200).json({
         reply,
         text: reply,
+        responses: [{ channel: req.body?.channel || "instagram", reply, text: reply }],
       });
     }
-
-    return res.status(200).json({
-      reply: responses[0].reply,
-      text: responses[0].reply,
-      responses,
-    });
   }
 
   router.post("/", handleRelay);
@@ -100,4 +129,4 @@ function createRouterRelay({ config, historyStore, botClient }) {
   return router;
 }
 
-module.exports = { checkRelayToken, createRouterRelay, extractRelayMessages };
+module.exports = { checkRelayToken, createRouterRelay, extractRelayMessages, normalizeRelayReply, safeErrorReply };

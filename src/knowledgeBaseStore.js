@@ -19,7 +19,7 @@ function setupFallbackReply(languageHint) {
     return "We're still setting up this page. Please contact the team directly for now.";
   }
 
-  return "لسه بنجهّز معلومات هاي الصفحة. تواصل مع الفريق مباشرة حالياً وراح يساعدوك.";
+  return "لسه بنجهّز معلومات هاي الصفحة. احكي معنا مباشرة وهلّق بنساعدك.";
 }
 
 function createKnowledgeBaseStore({ baseTemplatePath, directoryPath }) {

@@ -2,7 +2,7 @@ const assert = require("node:assert/strict");
 const test = require("node:test");
 const express = require("express");
 const { createHistoryStore } = require("../src/history");
-const { checkRelayToken, createRouterRelay, extractRelayMessages } = require("../src/routerRelay");
+const { checkRelayToken, createRouterRelay, extractRelayMessages, normalizeRelayReply } = require("../src/routerRelay");
 
 test("relay accepts common dashboard payload shapes", () => {
   assert.deepEqual(extractRelayMessages({ text: "hello", senderId: "u1", ownerId: "client1" }, "fallback"), [
@@ -92,4 +92,46 @@ test("router webhook replies to voice payloads without calling AI", async () => 
   } finally {
     await new Promise((resolve) => server.close(resolve));
   }
+});
+
+test("router webhook returns a safe JSON reply when bot generation fails", async () => {
+  const app = express();
+  app.use(
+    "/router-webhook",
+    express.json(),
+    createRouterRelay({
+      config: { routerWebhookToken: "" },
+      historyStore: createHistoryStore(),
+      botClient: {
+        generateReply: async () => {
+          throw new Error("boom");
+        },
+      },
+    }),
+  );
+
+  const server = await new Promise((resolve) => {
+    const instance = app.listen(0, () => resolve(instance));
+  });
+
+  try {
+    const { port } = server.address();
+    const response = await fetch(`http://127.0.0.1:${port}/router-webhook/etihad`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: "هلا", senderId: "user-1", channel: "instagram" }),
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.doesNotMatch(body.reply, /<!DOCTYPE html|Internal Server Error/i);
+    assert.match(body.reply, /خلل بسيط/);
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});
+
+test("router relay normalizes accidental HTML replies", () => {
+  const reply = normalizeRelayReply("<!DOCTYPE html><html><body><pre>Internal Server Error</pre></body></html>", "instagram");
+  assert.match(reply, /خلل بسيط/);
 });
