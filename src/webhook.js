@@ -13,12 +13,17 @@ function verifyMetaSignature({ rawBody, signatureHeader, appSecret }) {
   return expectedBuffer.length === actualBuffer.length && crypto.timingSafeEqual(expectedBuffer, actualBuffer);
 }
 
+function asArray(value) {
+  if (!value) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
 function extractMessengerMessages(body) {
   const messages = [];
 
-  for (const entry of body.entry || []) {
+  for (const entry of asArray(body.entry)) {
     const pageId = String(entry.id || "");
-    for (const event of entry.messaging || []) {
+    for (const event of asArray(entry.messaging)) {
       const text = event.message?.text || event.postback?.payload;
       const senderId = event.sender?.id;
 
@@ -38,13 +43,13 @@ function extractMessengerMessages(body) {
 function extractInstagramMessages(body) {
   const messages = [];
 
-  for (const entry of body.entry || []) {
+  for (const entry of asArray(body.entry)) {
     const pageId = String(entry.id || "");
-    for (const change of entry.changes || []) {
+    for (const change of asArray(entry.changes)) {
       if (change.field !== "messages") continue;
 
       const value = change.value || {};
-      const candidateMessages = value.messages || value.messaging || [];
+      const candidateMessages = asArray(value.messages || value.messaging);
 
       for (const message of candidateMessages) {
         const senderId = message.from?.id || message.sender?.id || value.sender?.id;

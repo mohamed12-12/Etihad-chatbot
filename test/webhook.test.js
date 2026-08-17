@@ -35,6 +35,23 @@ test("extracts Messenger text messages", () => {
   ]);
 });
 
+test("extracts Messenger messages when entry and messaging are single objects", () => {
+  const body = {
+    object: "page",
+    entry: {
+      id: "PAGE_1",
+      messaging: {
+        sender: { id: "PSID_1" },
+        message: { text: "مرحبا" },
+      },
+    },
+  };
+
+  assert.deepEqual(extractIncomingMessages(body), [
+    { channel: "messenger", pageId: "PAGE_1", senderId: "PSID_1", text: "مرحبا" },
+  ]);
+});
+
 test("extracts Instagram messages payloads", () => {
   const body = {
     object: "instagram",
