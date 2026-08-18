@@ -2,7 +2,13 @@ const assert = require("node:assert/strict");
 const test = require("node:test");
 const express = require("express");
 const { createHistoryStore } = require("../src/history");
-const { checkRelayToken, createRouterRelay, extractRelayMessages, normalizeRelayReply } = require("../src/routerRelay");
+const {
+  checkRelayToken,
+  createRouterRelay,
+  extractRelayMessages,
+  extractResponseWebhook,
+  normalizeRelayReply,
+} = require("../src/routerRelay");
 
 test("relay accepts common dashboard payload shapes", () => {
   assert.deepEqual(extractRelayMessages({ text: "hello", senderId: "u1", ownerId: "client1" }, "fallback"), [
@@ -15,6 +21,11 @@ test("relay token can come from query, header, or bearer", () => {
   assert.equal(checkRelayToken({ get: (name) => (name === "x-router-token" ? "secret" : ""), query: {} }, "secret"), true);
   assert.equal(checkRelayToken({ get: () => "Bearer secret", query: {} }, "secret"), true);
   assert.equal(checkRelayToken({ get: () => "", query: {} }, "secret"), false);
+});
+
+test("extracts response webhook from common Nanovate payload fields", () => {
+  assert.equal(extractResponseWebhook({ response_webhook: "https://example.com/a" }), "https://example.com/a");
+  assert.equal(extractResponseWebhook({ bridge: { responseWebhook: "https://example.com/b" } }), "https://example.com/b");
 });
 
 test("POST /router-webhook/:clientId returns reply JSON without Meta send", async () => {
@@ -47,6 +58,54 @@ test("POST /router-webhook/:clientId returns reply JSON without Meta send", asyn
     assert.equal(response.status, 200);
     assert.equal(body.reply, "reply:etihad:مرحبا");
     assert.equal(body.responses[0].text, "reply:etihad:مرحبا");
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});
+
+test("router webhook posts reply to Nanovate response webhook when provided", async () => {
+  const callbacks = [];
+  const app = express();
+  app.use(
+    "/router-webhook",
+    express.json(),
+    createRouterRelay({
+      config: { routerWebhookToken: "" },
+      historyStore: createHistoryStore(),
+      botClient: {
+        generateReply: async ({ userMessage }) => `reply:${userMessage}`,
+      },
+      fetchImpl: async (url, options) => {
+        callbacks.push({ url, body: JSON.parse(options.body) });
+        return { ok: true };
+      },
+    }),
+  );
+
+  const server = await new Promise((resolve) => {
+    const instance = app.listen(0, () => resolve(instance));
+  });
+
+  try {
+    const { port } = server.address();
+    const response = await fetch(`http://127.0.0.1:${port}/router-webhook/etihad`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        channel: "instagram",
+        senderId: "user-1",
+        text: "مرحبا",
+        response_webhook: "https://demos.nanovate.io/instagram/webhook/response",
+      }),
+    });
+    const body = await response.json();
+
+    assert.equal(response.status, 200);
+    assert.equal(body.reply, "reply:مرحبا");
+    assert.equal(callbacks.length, 1);
+    assert.equal(callbacks[0].url, "https://demos.nanovate.io/instagram/webhook/response");
+    assert.equal(callbacks[0].body.text, "reply:مرحبا");
+    assert.equal(callbacks[0].body.reply, "reply:مرحبا");
   } finally {
     await new Promise((resolve) => server.close(resolve));
   }

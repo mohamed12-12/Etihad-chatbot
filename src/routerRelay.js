@@ -20,6 +20,44 @@ function normalizeRelayReply(reply, channel) {
   return text.slice(0, 950);
 }
 
+function extractResponseWebhook(body = {}) {
+  return (
+    body.response_webhook ||
+    body.responseWebhook ||
+    body.response_url ||
+    body.responseUrl ||
+    body.reply_webhook ||
+    body.replyWebhook ||
+    body.bridge?.response_webhook ||
+    body.bridge?.responseWebhook ||
+    ""
+  );
+}
+
+async function postResponseWebhook({ responseWebhook, response, fetchImpl }) {
+  if (!responseWebhook) return;
+
+  const payload = {
+    text: response.reply,
+    reply: response.reply,
+    message: { text: response.reply },
+    channel: response.channel,
+    pageId: response.pageId,
+    senderId: response.senderId,
+  };
+
+  const callbackResponse = await fetchImpl(responseWebhook, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!callbackResponse.ok) {
+    const body = await callbackResponse.text().catch(() => "");
+    throw new Error(`Router response webhook failed (${callbackResponse.status}): ${body}`);
+  }
+}
+
 function checkRelayToken(req, token) {
   if (!token) return true;
 
@@ -65,7 +103,7 @@ function extractRelayMessages(body, fallbackClientId) {
   return [{ channel, pageId: String(pageId), senderId: String(senderId), text: String(text) }];
 }
 
-function createRouterRelay({ config, historyStore, botClient }) {
+function createRouterRelay({ config, historyStore, botClient, fetchImpl = fetch }) {
   const express = require("express");
   const router = express.Router();
 
@@ -77,6 +115,7 @@ function createRouterRelay({ config, historyStore, botClient }) {
 
       const fallbackClientId = req.params.clientId || config.routerDefaultClientId || "default";
       const messages = extractRelayMessages(req.body || {}, fallbackClientId);
+      const responseWebhook = extractResponseWebhook(req.body || {});
 
       if (!messages.length) {
         return res.status(400).json({ error: "No message text found in payload." });
@@ -98,13 +137,20 @@ function createRouterRelay({ config, historyStore, botClient }) {
 
         historyStore.append(userKey, "user", incoming.text || "[voice note]");
         historyStore.append(userKey, "assistant", reply);
-        responses.push({
+        const response = {
           channel: incoming.channel,
           pageId: incoming.pageId,
           senderId: incoming.senderId,
           reply,
           text: reply,
-        });
+        };
+        responses.push(response);
+
+        try {
+          await postResponseWebhook({ responseWebhook, response, fetchImpl });
+        } catch (error) {
+          console.error("Router response webhook error:", error);
+        }
       }
 
       return res.status(200).json({
@@ -129,4 +175,12 @@ function createRouterRelay({ config, historyStore, botClient }) {
   return router;
 }
 
-module.exports = { checkRelayToken, createRouterRelay, extractRelayMessages, normalizeRelayReply, safeErrorReply };
+module.exports = {
+  checkRelayToken,
+  createRouterRelay,
+  extractRelayMessages,
+  extractResponseWebhook,
+  normalizeRelayReply,
+  postResponseWebhook,
+  safeErrorReply,
+};
