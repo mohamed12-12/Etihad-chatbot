@@ -1,5 +1,6 @@
 const crypto = require("node:crypto");
 const { isAudioLike, voiceReply } = require("./nonTextReply");
+const { createMessageDeduper } = require("./messageDedupe");
 const { waitBeforeReply } = require("./responseDelay");
 
 function verifyMetaSignature({ rawBody, signatureHeader, appSecret }) {
@@ -26,14 +27,17 @@ function extractMessengerMessages(body) {
     for (const event of asArray(entry.messaging)) {
       const text = event.message?.text || event.postback?.payload;
       const senderId = event.sender?.id;
+      const messageId =
+        event.message?.mid ||
+        (event.postback ? `postback:${senderId}:${event.timestamp || ""}:${event.postback.payload || ""}` : "");
 
       if (!senderId || event.message?.is_echo) continue;
       if (!text && isAudioLike(event.message?.attachments)) {
-        messages.push({ channel: "messenger", pageId, senderId, text: "", directReply: voiceReply() });
+        messages.push({ channel: "messenger", pageId, senderId, messageId, text: "", directReply: voiceReply() });
         continue;
       }
       if (!text) continue;
-      messages.push({ channel: "messenger", pageId, senderId, text });
+      messages.push({ channel: "messenger", pageId, senderId, messageId, text });
     }
   }
 
@@ -54,13 +58,14 @@ function extractInstagramMessages(body) {
       for (const message of candidateMessages) {
         const senderId = message.from?.id || message.sender?.id || value.sender?.id;
         const text = message.text?.body || message.message?.text || message.text;
+        const messageId = message.id || message.mid || message.message?.mid || value.message_id || "";
         if (!senderId) continue;
         if (!text && isAudioLike(message)) {
-          messages.push({ channel: "instagram", pageId, senderId, text: "", directReply: voiceReply() });
+          messages.push({ channel: "instagram", pageId, senderId, messageId, text: "", directReply: voiceReply() });
           continue;
         }
         if (!text) continue;
-        messages.push({ channel: "instagram", pageId, senderId, text });
+        messages.push({ channel: "instagram", pageId, senderId, messageId, text });
       }
     }
   }
@@ -72,7 +77,7 @@ function extractIncomingMessages(body) {
   return [...extractMessengerMessages(body), ...extractInstagramMessages(body)];
 }
 
-function createWebhookRouter({ config, historyStore, botClient, sendMetaMessage, pageStore }) {
+function createWebhookRouter({ config, historyStore, botClient, sendMetaMessage, pageStore, deduper = createMessageDeduper() }) {
   const express = require("express");
   const router = express.Router();
 
@@ -107,6 +112,11 @@ function createWebhookRouter({ config, historyStore, botClient, sendMetaMessage,
     res.sendStatus(200);
 
     for (const incoming of incomingMessages) {
+      if (deduper.isDuplicate(incoming.messageId)) {
+        console.warn("Skipping duplicate message:", incoming.messageId);
+        continue;
+      }
+
       const userKey = `${incoming.channel}:${incoming.pageId}:${incoming.senderId}`;
       const history = historyStore.get(userKey);
       await waitBeforeReply(config);

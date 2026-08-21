@@ -101,7 +101,9 @@ test("router webhook posts reply to Nanovate response webhook when provided", as
     const body = await response.json();
 
     assert.equal(response.status, 200);
-    assert.equal(body.reply, "reply:مرحبا");
+    // Reply goes out on the response webhook only, so the router does not send it twice.
+    assert.equal(body.reply, undefined);
+    assert.equal(body.ok, true);
     assert.equal(callbacks.length, 1);
     assert.equal(callbacks[0].url, "https://demos.nanovate.io/instagram/webhook/response");
     assert.equal(callbacks[0].body.text, "reply:مرحبا");

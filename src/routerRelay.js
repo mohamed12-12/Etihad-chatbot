@@ -1,4 +1,5 @@
 const { extractIncomingMessages } = require("./webhook");
+const { createMessageDeduper } = require("./messageDedupe");
 const { isAudioLike, voiceReply } = require("./nonTextReply");
 const { waitBeforeReply } = require("./responseDelay");
 
@@ -103,7 +104,7 @@ function extractRelayMessages(body, fallbackClientId) {
   return [{ channel, pageId: String(pageId), senderId: String(senderId), text: String(text) }];
 }
 
-function createRouterRelay({ config, historyStore, botClient, fetchImpl = fetch }) {
+function createRouterRelay({ config, historyStore, botClient, fetchImpl = fetch, deduper = createMessageDeduper() }) {
   const express = require("express");
   const router = express.Router();
 
@@ -123,6 +124,11 @@ function createRouterRelay({ config, historyStore, botClient, fetchImpl = fetch 
 
       const responses = [];
       for (const incoming of messages) {
+        if (deduper.isDuplicate(incoming.messageId)) {
+          console.warn("Skipping duplicate relay message:", incoming.messageId);
+          continue;
+        }
+
         const userKey = `router:${incoming.channel}:${incoming.pageId}:${incoming.senderId}`;
         const history = historyStore.get(userKey);
         await waitBeforeReply(config);
@@ -151,6 +157,16 @@ function createRouterRelay({ config, historyStore, botClient, fetchImpl = fetch 
         } catch (error) {
           console.error("Router response webhook error:", error);
         }
+      }
+
+      if (!responses.length) {
+        return res.status(200).json({ ok: true, skipped: "duplicate" });
+      }
+
+      // The router already got every reply on its response webhook; echoing them in the
+      // HTTP body too makes it send each message twice.
+      if (responseWebhook) {
+        return res.status(200).json({ ok: true, delivered: responses.length });
       }
 
       return res.status(200).json({

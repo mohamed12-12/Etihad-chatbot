@@ -31,7 +31,7 @@ test("extracts Messenger text messages", () => {
   };
 
   assert.deepEqual(extractIncomingMessages(body), [
-    { channel: "messenger", pageId: "", senderId: "PSID_1", text: "مرحبا" },
+    { channel: "messenger", pageId: "", senderId: "PSID_1", messageId: "", text: "مرحبا" },
   ]);
 });
 
@@ -48,7 +48,7 @@ test("extracts Messenger messages when entry and messaging are single objects", 
   };
 
   assert.deepEqual(extractIncomingMessages(body), [
-    { channel: "messenger", pageId: "PAGE_1", senderId: "PSID_1", text: "مرحبا" },
+    { channel: "messenger", pageId: "PAGE_1", senderId: "PSID_1", messageId: "", text: "مرحبا" },
   ]);
 });
 
@@ -75,7 +75,7 @@ test("extracts Instagram messages payloads", () => {
   };
 
   assert.deepEqual(extractIncomingMessages(body), [
-    { channel: "instagram", pageId: "", senderId: "IGSID_1", text: "How much?" },
+    { channel: "instagram", pageId: "", senderId: "IGSID_1", messageId: "", text: "How much?" },
   ]);
 });
 
@@ -178,6 +178,70 @@ test("POST /webhook passes Meta entry page ID into the bot client", async () => 
     await new Promise((resolve) => setTimeout(resolve, 20));
     assert.equal(response.status, 200);
     assert.equal(seenPageId, "PAGE_ABC");
+  } finally {
+    await new Promise((resolve) => server.close(resolve));
+  }
+});
+
+test("POST /webhook sends one reply when Meta redelivers the same message", async () => {
+  const appSecret = "secret";
+  const rawBody = Buffer.from(
+    JSON.stringify({
+      object: "page",
+      entry: [
+        {
+          id: "PAGE_ABC",
+          messaging: [
+            {
+              sender: { id: "PSID_1" },
+              message: { mid: "m_duplicate", text: "مرحبا" },
+            },
+          ],
+        },
+      ],
+    }),
+  );
+  const signatureHeader = `sha256=${crypto.createHmac("sha256", appSecret).update(rawBody).digest("hex")}`;
+  let sends = 0;
+
+  const app = express();
+  app.use(
+    "/webhook",
+    express.raw({ type: "application/json" }),
+    createWebhookRouter({
+      config: { appSecret, verifyToken: "verify" },
+      historyStore: createHistoryStore(),
+      botClient: { generateReply: async () => "ok" },
+      sendMetaMessage: async () => {
+        sends += 1;
+        return {};
+      },
+      pageStore: { get: () => ({ pageAccessToken: "token" }) },
+    }),
+  );
+
+  const server = await new Promise((resolve) => {
+    const instance = app.listen(0, () => resolve(instance));
+  });
+
+  try {
+    const { port } = server.address();
+    const post = () =>
+      fetch(`http://127.0.0.1:${port}/webhook`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Hub-Signature-256": signatureHeader,
+        },
+        body: rawBody,
+      });
+
+    await post();
+    await new Promise((resolve) => setTimeout(resolve, 20));
+    await post();
+    await new Promise((resolve) => setTimeout(resolve, 20));
+
+    assert.equal(sends, 1);
   } finally {
     await new Promise((resolve) => server.close(resolve));
   }
